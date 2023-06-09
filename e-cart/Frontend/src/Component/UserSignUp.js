@@ -20,6 +20,7 @@ import { connect } from "react-redux";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const theme = createTheme();
 
@@ -36,7 +37,7 @@ const modalStyle = {
 };
 
 function UserSignUp(props) {
-  const { actions, successMsg, errorMsg } = props;
+  const { actions, successMsg, errorMsg, signUpLoading } = props;
   const [openModal, setOpenModal] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -58,13 +59,17 @@ function UserSignUp(props) {
       !userData.number ||
       !userData.password
     ) {
-      console.log("Please enter all required Fields.");
-      setError("Please enter all required Fields.");
+      console.log("Please Enter all required Fields.");
+      setError("Please enter all required fields.");
     } else {
       setError(null);
       actions.createUser({ data: userData });
     }
   };
+
+  useEffect(() => {
+    console.log("User data loading", signUpLoading);
+  });
 
   useEffect(() => {
     // console.log("Successmsg is", successMsg);
@@ -232,25 +237,34 @@ function UserSignUp(props) {
           </Box>
         </Grid>
       </Grid>
-      <Modal open={openModal} onClose={handleClose}>
-        <Box sx={modalStyle} p={2}>
-          <Stack direction="row" justifyContent="end">
-            <Button>
-              <CloseOutlinedIcon sx={{ color: "red" }} onClick={handleClose} />
-            </Button>
-          </Stack>
-          <Divider sx={{ backgroundColor: "blue" }} />
-          {successMsg ? (
-            <Typography p={2} sx={{ color: "green" }}>
-              {successMsg}
-            </Typography>
-          ) : (
-            <Typography p={2} sx={{ color: "red" }}>
-              {error ? error : errorMsg}
-            </Typography>
-          )}
-        </Box>
-      </Modal>
+      {signUpLoading ? (
+        <Stack sx={{ position: "absolute", top: "50%", left: "50%" }} p={1}>
+          <CircularProgress size={70} />
+        </Stack>
+      ) : (
+        <Modal open={openModal} onClose={handleClose}>
+          <Box sx={modalStyle} p={2}>
+            <Stack direction="row" justifyContent="end">
+              <Button>
+                <CloseOutlinedIcon
+                  sx={{ color: "red" }}
+                  onClick={handleClose}
+                />
+              </Button>
+            </Stack>
+            <Divider sx={{ backgroundColor: "blue" }} />
+            {successMsg ? (
+              <Typography p={2} sx={{ color: "green" }}>
+                {successMsg}
+              </Typography>
+            ) : (
+              <Typography p={2} sx={{ color: "red" }}>
+                {error ? error : errorMsg}
+              </Typography>
+            )}
+          </Box>
+        </Modal>
+      )}
     </ThemeProvider>
   );
 }
@@ -259,6 +273,7 @@ const mapStateToProps = ({ userReducer }) => {
   return {
     successMsg: userReducer.successMsg,
     errorMsg: userReducer.errorMsg,
+    signUpLoading: userReducer.signUpLoading,
   };
 };
 

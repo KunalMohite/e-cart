@@ -6,6 +6,8 @@ const initialState = {
   errorMsg: null,
   jwtToken: null,
   loginError: null,
+  signUpLoading: false,
+  loginLoading:false
 };
 
 const userReducer = (state = initialState, action) => {
@@ -13,18 +15,21 @@ const userReducer = (state = initialState, action) => {
     case actionType.CREATE_USER_REQUESTED: {
       return {
         ...state,
+        signUpLoading: true
       };
     }
     case actionType.CREATE_USER_SUCCESS: {
       return {
         ...state,
         successMsg: action.successMsg,
+        signUpLoading: false
       };
     }
     case actionType.CREATE_USER_FAIL: {
       return {
         ...state,
         errorMsg: action.errorMsg,
+        signUpLoading: false
       };
     }
     case actionType.RESET_DATA: {
@@ -37,18 +42,21 @@ const userReducer = (state = initialState, action) => {
     case actionType.LOGIN_ACCESS_REQUESTED: {
       return {
         ...state,
+        loginLoading:true
       };
     }
     case actionType.LOGIN_ACCESS_SUCCESS: {
       return {
         ...state,
         jwtToken: action.payload,
+        loginLoading:false
       };
     }
     case actionType.LOGIN_ACCESS_FAIL: {
       return {
         ...state,
         loginError: action.loginErrorMsg,
+        loginLoading:false
       };
     }
     default: {

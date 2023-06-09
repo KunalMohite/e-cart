@@ -11,6 +11,7 @@ import {
   Stack,
   Divider,
   Typography,
+  CircularProgress
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -36,7 +37,7 @@ const modalStyle = {
 };
 
 function Login(props) {
-  const { actions, jwtToken, loginError } = props;
+  const { actions, jwtToken, loginError, loginLoading } = props;
   const [openModal, setOpenModal] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ function Login(props) {
     if (loginError || error) {
       setOpenModal(true);
     }
-  }, [loginError, jwtToken,error]);
+  }, [loginError, jwtToken, error]);
 
   const handleClose = () => {
     setOpenModal(false);
@@ -82,7 +83,8 @@ function Login(props) {
           sm={4}
           md={7}
           sx={{
-            backgroundImage:"url(https://img.freepik.com/free-photo/sign-user-password-privacy-concept_53876-121137.jpg?w=826&t=st=1686033048~exp=1686033648~hmac=7e99a5d2dc4473756ac61017375c97ac1d10c79ed5f7ebae31d263b3770058e1)",
+            backgroundImage:
+              "url(https://img.freepik.com/free-photo/sign-user-password-privacy-concept_53876-121137.jpg?w=826&t=st=1686033048~exp=1686033648~hmac=7e99a5d2dc4473756ac61017375c97ac1d10c79ed5f7ebae31d263b3770058e1)",
             backgroundRepeat: "no-repeat",
             backgroundSize: "80%",
             backgroundPosition: "center",
@@ -194,19 +196,28 @@ function Login(props) {
         </Grid>
       </Grid>
 
-      <Modal open={openModal} onClose={handleClose}>
-        <Box sx={modalStyle} p={2}>
-          <Stack direction="row" justifyContent="end">
-            <Button>
-              <CloseOutlinedIcon sx={{ color: "red" }} onClick={handleClose} />
-            </Button>
-          </Stack>
-          <Divider sx={{ backgroundColor: "blue" }} />
-          <Typography p={2} sx={{ color: "red" }}>
-            {error ? error : loginError}
-          </Typography>
-        </Box>
-      </Modal>
+      {loginLoading ? (
+        <Stack sx={{ position: "absolute", top: "50%", left: "50%" }} p={1}>
+          <CircularProgress size={70} />
+        </Stack>
+      ) : (
+        <Modal open={openModal} onClose={handleClose}>
+          <Box sx={modalStyle} p={2}>
+            <Stack direction="row" justifyContent="end">
+              <Button>
+                <CloseOutlinedIcon
+                  sx={{ color: "red" }}
+                  onClick={handleClose}
+                />
+              </Button>
+            </Stack>
+            <Divider sx={{ backgroundColor: "blue" }} />
+            <Typography p={2} sx={{ color: "red" }}>
+              {error ? error : loginError}
+            </Typography>
+          </Box>
+        </Modal>
+      )}
     </ThemeProvider>
   );
 }
@@ -215,6 +226,7 @@ const mapStateToProps = ({ userReducer }) => {
   return {
     jwtToken: userReducer.jwtToken,
     loginError: userReducer.loginError,
+    loginLoading: userReducer.loginLoading,
   };
 };
 

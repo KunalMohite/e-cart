@@ -8,7 +8,7 @@ function* postUserData(action) {
 
   try {
     const response = yield call(() =>
-      apis.post(`http://localhost:9090/signup`, data)
+      apis.post(`/users/signup`, data)
     );
     yield put({
       type: actionType.CREATE_USER_SUCCESS,
@@ -16,10 +16,11 @@ function* postUserData(action) {
       successMsg: "You have Successfully Registered.",
     });
   } catch (error) {
+    console.log("Error message is", error.message)
     yield put({
       type: actionType.CREATE_USER_FAIL,
       errorMsg:
-        "Registration failed. The email address provided may be registered already.",
+         "Registration failed. Network Error or the email address provided may be registered already.",
     });
   }
 }
@@ -34,7 +35,7 @@ function* authenticateLogin(action) {
 
   try {
     const response = yield call(() =>
-      apis.post(`http://localhost:9090/authenticate`, userData)
+      apis.post(`/users/authenticate`, userData)
     );
     yield put({
       type: actionType.LOGIN_ACCESS_SUCCESS,
